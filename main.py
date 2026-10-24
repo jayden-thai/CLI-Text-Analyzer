@@ -2,49 +2,36 @@ from collections import Counter
 from pathlib import Path
 
 
-def load_text(path: str):
-    originalPath = Path(path)
-    rawText = originalPath.read_text(encoding="utf-8")
-    cleanText = rawText.strip().lower()
-    cleanText = cleanText.replace(".", "").replace(",", "").replace("!", "").replace("?", "").replace("'s", " is").replace("n't", " not")
-    return cleanText
+def load_text(path: str) -> str:
+    original_path = Path(path)
+    raw_text = original_path.read_text(encoding="utf-8")
+    return raw_text
 
-def get_words(text: str):
-    counts = Counter(text.split())
-    return counts
+def get_words(text: str) -> list[str]:
+    cleanedText = text.strip().lower()
+    return [cleaned for word in cleanedText.split() if (cleaned := word.strip(".!?,"))]
 
-def printStats(counts: dict):
-    totalWords = 0
-    uniqueWords = 0
-    commonWords = []
-    for word, count in counts.items():
-        totalWords += count
-        uniqueWords = uniqueWords + 1
-        if len(commonWords) < 3:
-            commonWords.append(word)
-        else:
-            minLesserWord = word
-            for key in commonWords:
-                if counts.get(key) < counts.get(minLesserWord):
-                    minLesserWord = key
+def count_words(words: list[str]) -> Counter[str]:
+    return Counter(words)
 
-            if minLesserWord != word:
-                commonWords.remove(minLesserWord)
-                commonWords.append(word)
+def print_Stats(counts: Counter[str]) -> None:
+    total_words = sum(counts.values())
+    unique_words = len(counts)
+    common_words = counts.most_common(3)
 
-    ordered = sorted(commonWords, key=lambda word: counts[word], reverse=True)
-
-    print(f"Total Words: {totalWords}")
-    print(f"Unique Words: {uniqueWords}")
+    print(f"Total Words: {total_words}")
+    print(f"Unique Words: {unique_words}")
     print("Common Words:\n")
-    for word in ordered:
-        print("\t" + word + f" - {counts.get(word)} instances")
+    for word, count in common_words:
+        print(f"\t{word} - {count} instances")
 
 
 
 def main():
-    cleanText = load_text("./sample.txt")
-    printStats(get_words(cleanText))
+    clean_text = load_text("./sample.txt")
+    clean_words = get_words(clean_text)
+    word_counts = count_words(clean_words)
+    print_Stats(word_counts)
 
 if __name__ == "__main__":
     main()
