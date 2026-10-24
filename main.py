@@ -8,13 +8,13 @@ def load_text(path: str) -> str:
     return raw_text
 
 def get_words(text: str) -> list[str]:
-    cleanedText = text.strip().lower()
-    return [cleaned for word in cleanedText.split() if (cleaned := word.strip(".!?,"))]
+    cleaned_text = text.strip().lower()
+    return [cleaned for word in cleaned_text.split() if (cleaned := word.strip(".!?,"))]
 
 def count_words(words: list[str]) -> Counter[str]:
     return Counter(words)
 
-def print_Stats(counts: Counter[str]) -> None:
+def print_stats(counts: Counter[str]) -> None:
     total_words = sum(counts.values())
     unique_words = len(counts)
     common_words = counts.most_common(3)
@@ -28,10 +28,10 @@ def print_Stats(counts: Counter[str]) -> None:
 
 
 def main():
-    clean_text = load_text("./sample.txt")
-    clean_words = get_words(clean_text)
+    raw_text = load_text("./sample.txt")
+    clean_words = get_words(raw_text)
     word_counts = count_words(clean_words)
-    print_Stats(word_counts)
+    print_stats(word_counts)
 
 if __name__ == "__main__":
     main()
